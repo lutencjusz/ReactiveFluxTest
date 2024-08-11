@@ -36,7 +36,7 @@ public class StudentApiController {
                 .body(Mono.just(student), Student.class)
                 .retrieve()
                 .bodyToMono(Student.class);
-        studentMono.subscribe(s-> logger.info(s.toString()));
+        studentMono.subscribe(s -> logger.info(s.toString()));
         return studentMono;
     }
 }
