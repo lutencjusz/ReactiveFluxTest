@@ -4,27 +4,27 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+/**
+ * Testy dla ReactiveSpringStudentApiController
+ * Wymaga uruchomionego springa ReactiveSpringApplication
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ReactiveSpringApplicationTests {
+public class ReactiveSpringStudentControllerTest {
 
     Logger logger = LoggerFactory.getLogger(StudentApiController.class);
 
-    private final StudentApiController studentApiController = new StudentApiController();
+    private final StudentController studentController = new StudentController(new StudentService());
 
-    /**
-     * Test sprawdza czy dane zwracane przez metodę get() z klasy StudentApiController są poprawne.
-     * Wymaga uruchomionego springa ReactiveSpringApplication
-     */
     @Test
     @Order(1)
     void testControllerGet() {
-        Flux<Student> studentFlux = studentApiController.get();
+        Flux<Student> studentFlux = studentController.getStudents();
         studentFlux
                 .doOnNext(student -> logger.info(student.toString()))
                 .subscribe();
@@ -35,14 +35,10 @@ class ReactiveSpringApplicationTests {
                 .verifyComplete();
     }
 
-    /**
-     * Test sprawdza czy dane zwracane przez metodę createStudent() z klasy StudentApiController są poprawne.
-     * Wymaga uruchomionego springa ReactiveSpringApplication
-     */
     @Test()
     @Order(2)
-    void testControllerCreateStudent() {
-        Mono<Student> studentMono = studentApiController.createStudent(new Student(4, "Paweł", "30"));
+    void testControllerAddStudent() {
+        Mono<Student> studentMono = studentController.addStudent(new Student(4, "Paweł", "30"));
         studentMono
                 .doOnNext(student -> logger.info(student.toString()))
                 .subscribe();
@@ -50,4 +46,6 @@ class ReactiveSpringApplicationTests {
                 .expectNext(new Student(4, "Paweł", "30"))
                 .verifyComplete();
     }
+
+
 }
